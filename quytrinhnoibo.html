@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Chatbot AI Nhân Sự</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #eef2f5; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+    #chatbox {
+      background: #ffffff;
+      width: 400px;
+      height: 600px;
+      display: flex;
+      flex-direction: column;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    #messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      white-space: pre-wrap;
+    }
+    .message {
+      max-width: 80%;
+      margin: 5px 0;
+      padding: 10px 15px;
+      border-radius: 20px;
+      line-height: 1.4;
+      font-size: 14px;
+    }
+    .user {
+      align-self: flex-end;
+      background-color: #daf1ff;
+      color: #000;
+    }
+    .bot {
+      align-self: flex-start;
+      background-color: #e1ffd6;
+      color: #000;
+    }
+    #inputArea {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ccc;
+    }
+    #userInput {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+    button {
+      margin-left: 10px;
+      padding: 10px 20px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="chatbox">
+    <div id="messages"></div>
+    <div id="inputArea">
+      <input type="text" id="userInput" placeholder="Nhập tin nhắn...">
+      <button onclick="processInput()">Gửi</button>
+    </div>
+  </div>
+
+  <script>
+    function processInput() {
+      const inputField = document.getElementById('userInput');
+      const input = inputField.value.trim();
+      if (!input) return;
+
+      const messages = document.getElementById('messages');
+      const userMsg = document.createElement('div');
+      userMsg.className = 'message user';
+      userMsg.textContent = input;
+      messages.appendChild(userMsg);
+
+      let response = '';
+      if (input.includes('mở lớp')) {
+        response = `1. Điền form đề xuất mở lớp\n2. Gửi nội dung giảng dạy và đề cương\n3. HT xét duyệt và phân công giảng viên\n4. Lên lịch học và đăng lên HT.`;
+      } else if (input.includes('đăng ký học')) {
+        response = `1. Điền biểu mẫu đăng ký\n2. Hệ thống xác nhận và xếp lớp\n3. Thanh toán học phí để hoàn thành đăng ký.`;
+      } else if (input.includes('phân lớp')) {
+        response = `1. Điền thông tin học viên, khóa học\n2. HT kiểm tra và lên lịch\n3. Lưu lớp vào CSDL.`;
+      } else if (input.includes('đánh giá')) {
+        response = `1. Điền thông tin học viên\n2. HT kiểm tra thông tin học viên và giảng viên\n3. Nhập đánh giá\n4. HT lưu vào CSDL.`;
+      } else {
+        response = 'OpenAI: Tôi chưa có thông tin sẵn về yêu cầu này.\nBạn có thể nói rõ hơn để tôi hỗ trợ tốt hơn không?';
+      }
+
+      const botMsg = document.createElement('div');
+      botMsg.className = 'message bot';
+      botMsg.textContent = response;
+      messages.appendChild(botMsg);
+
+      inputField.value = '';
+      messages.scrollTop = messages.scrollHeight;
+    }
+  </script>
+</body>
+</html>
