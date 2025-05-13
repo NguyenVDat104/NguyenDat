@@ -1,111 +1,223 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Chatbot AI Nhân Sự</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #eef2f5; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-    #chatbox {
-      background: #ffffff;
-      width: 400px;
-      height: 600px;
-      display: flex;
-      flex-direction: column;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-    }
-    #messages {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      white-space: pre-wrap;
-    }
-    .message {
-      max-width: 80%;
-      margin: 5px 0;
-      padding: 10px 15px;
-      border-radius: 20px;
-      line-height: 1.4;
-      font-size: 14px;
-    }
-    .user {
-      align-self: flex-end;
-      background-color: #daf1ff;
-      color: #000;
-    }
-    .bot {
-      align-self: flex-start;
-      background-color: #e1ffd6;
-      color: #000;
-    }
-    #inputArea {
-      display: flex;
-      padding: 10px;
-      border-top: 1px solid #ccc;
-    }
-    #userInput {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 20px;
-      font-size: 14px;
-    }
-    button {
-      margin-left: 10px;
-      padding: 10px 20px;
-      border: none;
-      background-color: #007bff;
-      color: white;
-      border-radius: 20px;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BotChat AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chat-container {
+            width: 350px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .header img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+        .header h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        .header span {
+            color: #888;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+        .chatbox {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .message {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .bot {
+            justify-content: flex-start;
+        }
+        .user {
+            justify-content: flex-end;
+        }
+        .message img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .message-content {
+            padding: 10px;
+            border-radius: 15px;
+            max-width: 70%;
+            font-size: 14px;
+        }
+        .bot .message-content {
+            background-color: #e6e6fa;
+            color: #333;
+        }
+        .user .message-content {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .input-area {
+            padding: 10px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .input-area input {
+            width: 70%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 15px;
+            margin-right: 10px;
+        }
+        .input-area button {
+            padding: 8px 15px;
+            border: none;
+            background-color: #e6e6fa;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+        .input-area button:hover {
+            background-color: #dadaf8;
+        }
+    </style>
 </head>
 <body>
-  <div id="chatbox">
-    <div id="messages"></div>
-    <div id="inputArea">
-      <input type="text" id="userInput" placeholder="Nhập tin nhắn...">
-      <button onclick="processInput()">Gửi</button>
+    <div class="chat-container">
+        <div class="header">
+            <img src="https://via.placeholder.com/30" alt="Bot Icon">
+            <h2>BotChat AI</h2>
+            <span>Online</span>
+        </div>
+        <div class="chatbox" id="chatbox">
+            <div class="message bot">
+                <img src="https://via.placeholder.com/30" alt="Bot Icon">
+                <div class="message-content">Xin chào! Tớ có thể giúp được gì cho bạn?</div>
+            </div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Nhập câu hỏi của bạn...">
+            <button onclick="sendMessage()">Gửi</button>
+        </div>
     </div>
-  </div>
 
-  <script>
-    function processInput() {
-      const inputField = document.getElementById('userInput');
-      const input = inputField.value.trim();
-      if (!input) return;
+    <script>
+        const chatbox = document.getElementById('chatbox');
 
-      const messages = document.getElementById('messages');
-      const userMsg = document.createElement('div');
-      userMsg.className = 'message user';
-      userMsg.textContent = input;
-      messages.appendChild(userMsg);
+        function addMessage(message, isBot) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${isBot ? 'bot' : 'user'}`;
+            if (isBot) {
+                const img = document.createElement('img');
+                img.src = 'https://via.placeholder.com/30';
+                img.alt = 'Bot Icon';
+                img.className = 'bot-icon';
+                msgDiv.appendChild(img);
+            }
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = message;
+            msgDiv.appendChild(contentDiv);
+            chatbox.appendChild(msgDiv);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
 
-      let response = '';
-      if (input.includes('mở lớp')) {
-        response = `1. Điền form đề xuất mở lớp\n2. Gửi nội dung giảng dạy và đề cương\n3. HT xét duyệt và phân công giảng viên\n4. Lên lịch học và đăng lên HT.`;
-      } else if (input.includes('đăng ký học')) {
-        response = `1. Điền biểu mẫu đăng ký\n2. Hệ thống xác nhận và xếp lớp\n3. Thanh toán học phí để hoàn thành đăng ký.`;
-      } else if (input.includes('phân lớp')) {
-        response = `1. Điền thông tin học viên, khóa học\n2. HT kiểm tra và lên lịch\n3. Lưu lớp vào CSDL.`;
-      } else if (input.includes('đánh giá')) {
-        response = `1. Điền thông tin học viên\n2. HT kiểm tra thông tin học viên và giảng viên\n3. Nhập đánh giá\n4. HT lưu vào CSDL.`;
-      } else {
-        response = 'OpenAI: Tôi chưa có thông tin sẵn về yêu cầu này.\nBạn có thể nói rõ hơn để tôi hỗ trợ tốt hơn không?';
-      }
+        const scenarios = {
+            'tôi muốn mở lớp trên tap': () => {
+                setTimeout(() => addMessage('Bạn cần thực hiện các bước sau:', true), 500);
+                setTimeout(() => addMessage('1. Điền form để xuất mô lớp.', true), 600);
+                setTimeout(() => addMessage('2. Gửi nội dung giảng dạy và để chương trình trên tap.', true), 700);
+                setTimeout(() => addMessage('3. HT kết duyệt và phân công giảng viên.', true), 800);
+                setTimeout(() => addMessage('4. Lên lịch học và đăng lên HT.', true), 900);
+            },
+            'huấn luyện trên tap': () => {
+                setTimeout(() => addMessage('Bạn cần thực hiện các bước sau:', true), 500);
+                setTimeout(() => addMessage('1. Điền form để xuất mô lớp.', true), 600);
+                setTimeout(() => addMessage('2. Gửi nội dung giảng dạy và để chương trình trên tap.', true), 700);
+                setTimeout(() => addMessage('3. HT kết duyệt và phân công giảng viên.', true), 800);
+                setTimeout(() => addMessage('4. Lên lịch học và đăng lên HT.', true), 900);
+            },
+            'sao để đăng ký khóa học': () => {
+                setTimeout(() => addMessage('Bạn cần thực hiện các bước sau:', true), 500);
+                setTimeout(() => addMessage('1. Điền biểu mẫu đăng ký tại đây.', true), 600);
+                setTimeout(() => addMessage('2. Hệ thống sẽ liên hệ các ngành và xếp lớp phù hợp học.', true), 700);
+                setTimeout(() => addMessage('3. Thanh toán học phí để hoàn thành đăng ký.', true), 800);
+            },
+            'đăng ký khóa học': () => {
+                setTimeout(() => addMessage('Bạn cần thực hiện các bước sau:', true), 500);
+                setTimeout(() => addMessage('1. Điền biểu mẫu đăng ký tại đây.', true), 600);
+                setTimeout(() => addMessage('2. Hệ thống sẽ liên hệ các ngành và xếp lớp phù hợp học.', true), 700);
+                setTimeout(() => addMessage('3. Thanh toán học phí để hoàn thành đăng ký.', true), 800);
+            },
+            'đánh giá học viên': () => {
+                setTimeout(() => addMessage('Bạn cần thực hiện các bước sau:', true), 500);
+                setTimeout(() => addMessage('1. Điền thông tin cần học viên, khóa học.', true), 600);
+                setTimeout(() => addMessage('2. HT kiểm tra và lập lịch học CSDL.', true), 700);
+                setTimeout(() => addMessage('3. Điền thông tin giảng viên, HT xác nhận và đánh giá học viên đó.', true), 800);
+            },
+            'tôi muốn đánh giá học viên': () => {
+                setTimeout(() => addMessage('Bạn cần thực hiện các bước sau:', true), 500);
+                setTimeout(() => addMessage('1. Điền thông tin cần học viên, khóa học.', true), 600);
+                setTimeout(() => addMessage('2. HT kiểm tra và lập lịch học CSDL.', true), 700);
+                setTimeout(() => addMessage('3. Điền thông tin giảng viên, HT xác nhận và đánh giá học viên đó.', true), 800);
+            },
+            'lập kế hoạch': () => {
+                setTimeout(() => addMessage('Bạn cần thực hiện các bước sau:', true), 500);
+                setTimeout(() => addMessage('1. Điền thông tin học viên vào hệ thống.', true), 600);
+                setTimeout(() => addMessage('2. HT kiểm tra thông tin học viên và lập lịch học CSDL.', true), 700);
+            },
+            'tôi muốn lập kế hoạch': () => {
+                setTimeout(() => addMessage('Bạn cần thực hiện các bước sau:', true), 500);
+                setTimeout(() => addMessage('1. Điền thông tin học viên vào hệ thống.', true), 600);
+                setTimeout(() => addMessage('2. HT kiểm tra thông tin học viên và lập lịch học CSDL.', true), 700);
+            }
+        };
 
-      const botMsg = document.createElement('div');
-      botMsg.className = 'message bot';
-      botMsg.textContent = response;
-      messages.appendChild(botMsg);
+        function sendMessage() {
+            const input = document.getElementById('userInput').value.trim().toLowerCase();
+            if (input) {
+                addMessage(input, false);
+                const scenario = Object.keys(scenarios).find(key => input.includes(key));
+                if (scenario) {
+                    scenarios[scenario]();
+                } else {
+                    setTimeout(() => addMessage('BotChat AI: Tôi không nhận diện được câu hỏi của bạn.', true), 500);
+                    setTimeout(() => addMessage('Bạn có thể đưa ra các câu hỏi như:', true), 600);
+                    setTimeout(() => addMessage('- Tôi muốn mở lớp trên tap', true), 700);
+                    setTimeout(() => addMessage('- Sao để đăng ký khóa học', true), 800);
+                    setTimeout(() => addMessage('- Đánh giá học viên', true), 900);
+                    setTimeout(() => addMessage('- Lập kế hoạch', true), 1000);
+                }
+                document.getElementById('userInput').value = '';
+            }
+        }
 
-      inputField.value = '';
-      messages.scrollTop = messages.scrollHeight;
-    }
-  </script>
+        // Allow Enter key to send message
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
 </body>
 </html>
